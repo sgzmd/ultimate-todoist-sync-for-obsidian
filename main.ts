@@ -283,8 +283,26 @@ export default class UltimateTodoistSyncForObsidian extends Plugin {
 		//display default project for the current file on status bar
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		this.statusBar = this.addStatusBarItem();
-
-
+		
+		this.addCommand({
+			id: 'force-sync-todoist',
+			name: 'Force Sync Todoist',
+			callback: async () => {
+				if(!this.settings.apiInitialized){
+					new Notice(`Please set the todoist api first`)
+					return
+				}
+				try{
+					await this.scheduledSynchronization()
+					this.syncLock = false
+					new Notice(`Sync completed..`)
+				}catch(error){
+					new Notice(`An error occurred while syncing.:${error}`)
+					this.syncLock = false
+				}
+			},
+		});
+		
 	}
 
 
